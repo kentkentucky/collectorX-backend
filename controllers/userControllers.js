@@ -2,7 +2,7 @@ require("dotenv").config();
 const AUTH0_HOOK_SECRET = process.env.AUTH0_HOOK_SECRET;
 const nodemailer = require("nodemailer");
 
-const { User } = require("../db/mongodb");
+const { User, Favourite } = require("../db/mongodb");
 
 const syncUser = async (req, res) => {
   const { user, secret } = req.body;
@@ -15,6 +15,8 @@ const syncUser = async (req, res) => {
       _id: id,
       email: user.email,
       isNewUser: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
     if (response) {
       const transporter = nodemailer.createTransport({
@@ -95,9 +97,24 @@ const getProfile = async (req, res) => {
   const auth0ID = req.auth.sub;
   const id = auth0ID.split("|")[1];
   try {
-    const profile = await User.findById(id);
+    const profile = await User.findById(id).populate({
+      path: "listings",
+      options: { sort: { createdAt: -1 } },
+      populate: {
+        path: "condition",
+      },
+    });
     if (profile) {
-      res.json(profile);
+      const listingsWithLikes = await Promise.all(
+        profile.listings.map(async (listing) => {
+          const likesCount = await Favourite.countDocuments({
+            listing: listing._id,
+          });
+          return { ...listing.toObject(), likes: likesCount };
+        })
+      );
+
+      res.json({ ...profile.toObject(), listings: listingsWithLikes });
     }
   } catch (error) {
     console.error(error);

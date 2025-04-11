@@ -29,8 +29,9 @@ const userSchema = new mongoose.Schema({
   sales: [{ type: mongoose.ObjectId, ref: "Transaction" }],
   listings: [{ type: mongoose.ObjectId, ref: "Listing" }],
   reviews: [{ type: mongoose.ObjectId, ref: "Review" }],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  watchlist: [{ type: mongoose.ObjectId, ref: "Listing" }],
+  createdAt: Date,
+  updatedAt: Date,
 });
 const User = mongoose.model("User", userSchema);
 
@@ -38,8 +39,8 @@ const categorySchema = new mongoose.Schema({
   name: String,
   description: String,
   image: String,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  createdAt: Date,
+  updatedAt: Date,
 });
 const Category = mongoose.model("Category", categorySchema);
 
@@ -47,9 +48,46 @@ const advertisementSchema = new mongoose.Schema({
   name: String,
   image: String,
   link: String,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  createdAt: Date,
+  updatedAt: Date,
 });
 const Advertisement = mongoose.model("Advertisement", advertisementSchema);
 
-module.exports = { User, Category, Advertisement };
+const conditionSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  createdAt: Date,
+  updatedAt: Date,
+});
+const Condition = mongoose.model("Condition", conditionSchema);
+
+const listingSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  category: { type: mongoose.ObjectId, ref: "Category" },
+  condition: { type: mongoose.ObjectId, ref: "Condition" },
+  price: Number,
+  dealMethod: { type: String, enum: ["delivery", "meetup", "either"] },
+  location: String,
+  images: [String],
+  isSold: Boolean,
+  createdAt: Date,
+  updatedAt: Date,
+});
+const Listing = mongoose.model("Listing", listingSchema);
+
+const favouriteSchema = new mongoose.Schema({
+  userID: { type: mongoose.ObjectId, ref: "User" },
+  listingID: { type: mongoose.ObjectId, ref: "Listing" },
+  createdAt: Date,
+});
+const Favourite = mongoose.model("Favourite", favouriteSchema);
+
+module.exports = {
+  User,
+  Category,
+  Advertisement,
+  Condition,
+  Listing,
+  Favourite,
+};
