@@ -30,8 +30,8 @@ const userSchema = new mongoose.Schema({
   listings: [{ type: mongoose.ObjectId, ref: "Listing" }],
   reviews: [{ type: mongoose.ObjectId, ref: "Review" }],
   watchlist: [{ type: mongoose.ObjectId, ref: "Listing" }],
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 const User = mongoose.model("User", userSchema);
 
@@ -39,8 +39,8 @@ const categorySchema = new mongoose.Schema({
   name: String,
   description: String,
   image: String,
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 const Category = mongoose.model("Category", categorySchema);
 
@@ -48,16 +48,16 @@ const advertisementSchema = new mongoose.Schema({
   name: String,
   image: String,
   link: String,
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 const Advertisement = mongoose.model("Advertisement", advertisementSchema);
 
 const conditionSchema = new mongoose.Schema({
   name: String,
   description: String,
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 const Condition = mongoose.model("Condition", conditionSchema);
 
@@ -65,23 +65,35 @@ const listingSchema = new mongoose.Schema({
   name: String,
   description: String,
   category: { type: mongoose.ObjectId, ref: "Category" },
+  size: String,
   condition: { type: mongoose.ObjectId, ref: "Condition" },
   price: Number,
   dealMethod: { type: String, enum: ["delivery", "meetup", "either"] },
   location: String,
   images: [String],
   isSold: Boolean,
-  createdAt: Date,
-  updatedAt: Date,
+  userID: { type: mongoose.ObjectId, ref: "User" },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 const Listing = mongoose.model("Listing", listingSchema);
 
 const favouriteSchema = new mongoose.Schema({
   userID: { type: mongoose.ObjectId, ref: "User" },
   listingID: { type: mongoose.ObjectId, ref: "Listing" },
-  createdAt: Date,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 const Favourite = mongoose.model("Favourite", favouriteSchema);
+
+const searchSchema = new mongoose.Schema({
+  userID: { type: mongoose.ObjectId, ref: "User" },
+  searchType: { type: String, enum: ["Listing", "Category", "User"] },
+  referenceID: { type: mongoose.ObjectId, refPath: "searchType" },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+const Search = mongoose.model("Search", searchSchema);
 
 module.exports = {
   User,
@@ -90,4 +102,5 @@ module.exports = {
   Condition,
   Listing,
   Favourite,
+  Search,
 };

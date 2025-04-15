@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const { expressjwt: expressJwt } = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
-const multer = require("multer");
 
 const checkJwt = expressJwt({
   secret: jwksRsa.expressJwtSecret({
@@ -34,24 +33,20 @@ const checkScopesMiddleware = (requiredScopes) => {
   };
 };
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-const listControllers = require("../controllers/listControllers");
+const favouritesControllers = require("../controllers/favouritesControllers");
 
 router.get(
-  "/condition",
+  "/",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  listControllers.getConditions
+  favouritesControllers.getFavourite
 );
 
 router.post(
-  "/create",
+  "/",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  upload.array("images", 20),
-  listControllers.createListing
+  favouritesControllers.toggleFavourite
 );
 
 module.exports = router;

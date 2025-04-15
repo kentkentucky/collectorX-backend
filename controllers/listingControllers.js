@@ -1,4 +1,4 @@
-const { Condition, Listing, User } = require("../db/mongodb");
+const { Condition, Listing, User, Favourite } = require("../db/mongodb");
 const { bucket } = require("../db/firebase");
 const mongoose = require("mongoose");
 
@@ -22,6 +22,7 @@ const createListing = async (req, res) => {
     description,
     category,
     condition,
+    size,
     price,
     dealMethod,
     location,
@@ -45,6 +46,7 @@ const createListing = async (req, res) => {
           description,
           category,
           condition,
+          size,
           price,
           dealMethod,
           location,
@@ -96,4 +98,22 @@ const createListing = async (req, res) => {
   }
 };
 
-module.exports = { getConditions, createListing };
+const getListing = async (req, res) => {
+  const { listingID } = req.query;
+  try {
+    const listing = await Listing.findById(listingID)
+      .populate("condition")
+      .populate("userID");
+    if (listing) {
+      const likesCount = await Favourite.countDocuments({
+        listing: listing._id,
+      });
+      res.json({ ...listing.toObject(), likes: likesCount });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal Server Error");
+  }
+};
+
+module.exports = { getConditions, createListing, getListing };

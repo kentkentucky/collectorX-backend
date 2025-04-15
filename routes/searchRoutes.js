@@ -33,19 +33,33 @@ const checkScopesMiddleware = (requiredScopes) => {
   };
 };
 
-const categoryControllers = require("../controllers/categoryControllers");
+const searchControllers = require("../controllers/searchControllers");
 
 router.get(
   "/",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  categoryControllers.getCategories
+  searchControllers.getSearch
 );
 router.get(
-  "/listings",
+  "/recents",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  categoryControllers.getListings
+  searchControllers.getRecentSearches
+);
+
+router.post(
+  "/",
+  checkJwt,
+  checkScopesMiddleware(["update:user", "read:user"]),
+  searchControllers.updateRecentSearches
+);
+
+router.delete(
+  "/recents",
+  checkJwt,
+  checkScopesMiddleware(["update:user", "read:user"]),
+  searchControllers.deleteRecentSearch
 );
 
 module.exports = router;

@@ -33,19 +33,13 @@ const checkScopesMiddleware = (requiredScopes) => {
   };
 };
 
-const categoryControllers = require("../controllers/categoryControllers");
+const paymentControllers = require("../controllers/paymentControllers");
 
-router.get(
-  "/",
+router.post(
+  "/create",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  categoryControllers.getCategories
-);
-router.get(
-  "/listings",
-  checkJwt,
-  checkScopesMiddleware(["update:user", "read:user"]),
-  categoryControllers.getListings
+  paymentControllers.createPayment
 );
 
 module.exports = router;
