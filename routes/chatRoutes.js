@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const { expressjwt: expressJwt } = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
-const multer = require("multer");
 
 const checkJwt = expressJwt({
   secret: jwksRsa.expressJwtSecret({
@@ -34,45 +33,26 @@ const checkScopesMiddleware = (requiredScopes) => {
   };
 };
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-const listingControllers = require("../controllers/listingControllers");
+const chatControllers = require("../controllers/chatControllers");
 
 router.get(
   "/",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  listingControllers.getListing
+  chatControllers.getChats
 );
 router.get(
-  "/condition",
+  "/room",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  listingControllers.getConditions
-);
-
-router.post(
-  "/create",
-  checkJwt,
-  checkScopesMiddleware(["update:user", "read:user"]),
-  upload.array("images", 20),
-  listingControllers.createListing
+  chatControllers.getChatroom
 );
 
 router.put(
-  "/edit",
-  checkJwt,
-  checkScopesMiddleware(["update:user", "read:user"]),
-  upload.array("newImages", 20),
-  listingControllers.editListing
-);
-
-router.delete(
   "/",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  listingControllers.deleteListing
+  chatControllers.updateChat
 );
 
 module.exports = router;

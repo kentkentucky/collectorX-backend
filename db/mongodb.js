@@ -95,6 +95,14 @@ const searchSchema = new mongoose.Schema({
 });
 const Search = mongoose.model("Search", searchSchema);
 
+const chatSchema = new mongoose.Schema({
+  participants: [{ type: mongoose.ObjectId, ref: "User" }],
+  lastMessage: String,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+const Chat = mongoose.model("Chat", chatSchema);
+
 module.exports = {
   User,
   Category,
@@ -103,4 +111,5 @@ module.exports = {
   Listing,
   Favourite,
   Search,
+  Chat,
 };

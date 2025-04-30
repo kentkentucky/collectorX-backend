@@ -9,6 +9,8 @@ const homeRouter = require("./routes/homeRoutes");
 const listingRouter = require("./routes/listingRoutes");
 const paymentRouter = require("./routes/paymentRoutes");
 const searchRouter = require("./routes/searchRoutes");
+const favouritesRouter = require("./routes/favouritesRoutes");
+const chatRouter = require("./routes/chatRoutes");
 
 app.use(express.json());
 app.use(cors());
@@ -19,6 +21,8 @@ app.use("/home", homeRouter);
 app.use("/listing", listingRouter);
 app.use("/payment", paymentRouter);
 app.use("/search", searchRouter);
+app.use("/favourites", favouritesRouter);
+app.use("/chat", chatRouter);
 
 app.listen(port, () => {
   console.log(`CollectorX listening on port ${port}`);

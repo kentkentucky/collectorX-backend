@@ -1,4 +1,4 @@
-const { Advertisement, Listing, User } = require("../db/mongodb");
+const { Advertisement, Listing, User, Favourite } = require("../db/mongodb");
 
 const getHome = async (req, res) => {
   const auth0ID = req.auth.sub;
@@ -11,8 +11,9 @@ const getHome = async (req, res) => {
       category: { $in: preferredCategories },
       userID: { $ne: id },
     }).populate("condition");
-    if (advertisements && listings) {
-      res.json({ advertisements, listings });
+    const favourites = await Favourite.find({ userID: id }).select("listingID");
+    if (advertisements && listings && favourites) {
+      res.json({ advertisements, listings, favourites });
     }
   } catch (error) {
     console.error(error);

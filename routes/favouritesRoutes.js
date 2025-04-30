@@ -39,7 +39,7 @@ router.get(
   "/",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  favouritesControllers.getFavourite
+  favouritesControllers.getFavourites
 );
 
 router.post(

@@ -1,4 +1,4 @@
-const { Category, Listing } = require("../db/mongodb");
+const { Category, Listing, Favourite } = require("../db/mongodb");
 
 const getCategories = async (req, res) => {
   try {
@@ -22,10 +22,12 @@ const getListings = async (req, res) => {
       category: categoryID,
       userID: { $ne: id },
     }).populate("condition");
-    if (category && listings) {
+    const favourites = await Favourite.find({ userID: id }).select("listingID");
+    if (category && listings && favourites) {
       res.json({
         name: category.name,
         listings,
+        favourites,
       });
     }
   } catch (error) {

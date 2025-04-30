@@ -14,7 +14,7 @@ const syncUser = async (req, res) => {
     const response = await User.create({
       _id: id,
       email: user.email,
-      isNewUser: false,
+      isNewUser: true,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
