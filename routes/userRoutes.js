@@ -47,6 +47,18 @@ router.get(
   checkScopesMiddleware(["update:user", "read:user"]),
   userControllers.getProfile
 );
+router.get(
+  "/purchases",
+  checkJwt,
+  checkScopesMiddleware(["update:user", "read:user"]),
+  userControllers.getPurchases
+);
+router.get(
+  "/sales",
+  checkJwt,
+  checkScopesMiddleware(["update:user", "read:user"]),
+  userControllers.getSales
+);
 
 router.post("/sync", userControllers.syncUser);
 router.post(

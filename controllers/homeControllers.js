@@ -10,6 +10,7 @@ const getHome = async (req, res) => {
     const listings = await Listing.find({
       category: { $in: preferredCategories },
       userID: { $ne: id },
+      isSold: false,
     }).populate("condition");
     const favourites = await Favourite.find({ userID: id }).select("listingID");
     if (advertisements && listings && favourites) {

@@ -2,7 +2,9 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const createPayment = async (req, res) => {
-  const { amount, currency } = req.body;
+  const auth0ID = req.auth.sub;
+  const id = auth0ID.split("|")[1];
+  const { amount, currency, listingID, sellerID, offerID } = req.body;
   try {
     // Convert amount to the smallest currency unit (e.g., cents for SGD)
     const amountInSmallestUnit = Math.round(amount * 100);
@@ -10,7 +12,13 @@ const createPayment = async (req, res) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInSmallestUnit,
       currency,
-      metadata: { integration_check: "accept_a_payment" },
+      metadata: {
+        listingID,
+        buyerID: id,
+        sellerID,
+        offerID,
+        integration_check: "accept_a_payment",
+      },
     });
 
     if (paymentIntent) {

@@ -58,4 +58,28 @@ const updateChat = async (req, res) => {
   }
 };
 
-module.exports = { getChats, getChatroom, updateChat };
+const toggleChatRoom = async (req, res) => {
+  const auth0ID = req.auth.sub;
+  const id = auth0ID.split("|")[1];
+  const { sellerID } = req.query;
+  try {
+    const chat = await Chat.findOne({
+      participants: { $all: [id, sellerID] },
+    });
+    if (!chat) {
+      chat = new Chat({
+        participants: [id, sellerID],
+        lastMessage: "",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      await chat.save();
+    }
+    res.json({ chatID: chat._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal Server Error");
+  }
+};
+
+module.exports = { getChats, getChatroom, updateChat, toggleChatRoom };

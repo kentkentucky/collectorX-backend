@@ -33,32 +33,33 @@ const checkScopesMiddleware = (requiredScopes) => {
   };
 };
 
-const chatControllers = require("../controllers/chatControllers");
+const offerControllers = require("../controllers/offerControllers");
 
 router.get(
   "/",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  chatControllers.getChats
+  offerControllers.getOffers
 );
 router.get(
-  "/room",
+  "/count",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  chatControllers.getChatroom
+  offerControllers.getOfferCount
 );
-router.get(
-  "/toggle",
+
+router.post(
+  "/create",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  chatControllers.toggleChatRoom
+  offerControllers.createOffer
 );
 
 router.put(
-  "/",
+  "/response",
   checkJwt,
   checkScopesMiddleware(["update:user", "read:user"]),
-  chatControllers.updateChat
+  offerControllers.updateOffer
 );
 
 module.exports = router;

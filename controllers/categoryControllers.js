@@ -21,8 +21,11 @@ const getListings = async (req, res) => {
     const listings = await Listing.find({
       category: categoryID,
       userID: { $ne: id },
+      isSold: false,
     }).populate("condition");
-    const favourites = await Favourite.find({ userID: id }).select("listingID");
+    const favourites = await Favourite.find({
+      userID: id,
+    }).select("listingID");
     if (category && listings && favourites) {
       res.json({
         name: category.name,

@@ -68,7 +68,7 @@ const listingSchema = new mongoose.Schema({
   size: String,
   condition: { type: mongoose.ObjectId, ref: "Condition" },
   price: Number,
-  dealMethod: { type: String, enum: ["delivery", "meetup", "either"] },
+  dealMethod: { type: String, enum: ["Delivery", "Meetup", "Either"] },
   location: String,
   images: [String],
   isSold: Boolean,
@@ -103,6 +103,34 @@ const chatSchema = new mongoose.Schema({
 });
 const Chat = mongoose.model("Chat", chatSchema);
 
+const offerSchema = new mongoose.Schema({
+  listingID: { type: mongoose.ObjectId, ref: "Listing" },
+  buyerID: { type: mongoose.ObjectId, ref: "User" },
+  sellerID: { type: mongoose.ObjectId, ref: "User" },
+  offer: Number,
+  status: {
+    type: String,
+    enum: ["Pending", "Declined", "Accepted", "Cancelled", "Completed"],
+  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+const Offer = mongoose.model("Offer", offerSchema);
+
+const transactionSchema = new mongoose.Schema({
+  listingID: { type: mongoose.ObjectId, ref: "Listing" },
+  offerID: { type: mongoose.ObjectId, ref: "Offer" },
+  buyerID: { type: mongoose.ObjectId, ref: "User" },
+  sellerID: { type: mongoose.ObjectId, ref: "User" },
+  amount: Number,
+  currency: { type: String, default: "sgd" },
+  stripePaymentID: String,
+  review: { type: mongoose.ObjectId, ref: "Review" },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+const Transaction = mongoose.model("Transaction", transactionSchema);
+
 module.exports = {
   User,
   Category,
@@ -112,4 +140,6 @@ module.exports = {
   Favourite,
   Search,
   Chat,
+  Offer,
+  Transaction,
 };

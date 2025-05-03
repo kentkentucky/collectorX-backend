@@ -2,7 +2,7 @@ require("dotenv").config();
 const AUTH0_HOOK_SECRET = process.env.AUTH0_HOOK_SECRET;
 const nodemailer = require("nodemailer");
 
-const { User, Favourite } = require("../db/mongodb");
+const { User, Favourite, Transaction } = require("../db/mongodb");
 
 const syncUser = async (req, res) => {
   const { user, secret } = req.body;
@@ -122,4 +122,43 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { syncUser, validateNewUser, registerUser, getProfile };
+const getPurchases = async (req, res) => {
+  const auth0ID = req.auth.sub;
+  const id = auth0ID.split("|")[1];
+  try {
+    const purchases = await Transaction.find({ buyerID: id }).populate(
+      "listingID"
+    );
+    if (purchases) {
+      res.json(purchases);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal Server Error");
+  }
+};
+
+const getSales = async (req, res) => {
+  const auth0ID = req.auth.sub;
+  const id = auth0ID.split("|")[1];
+  try {
+    const sales = await Transaction.find({ sellerID: id }).populate(
+      "listingID"
+    );
+    if (sales) {
+      res.json(sales);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal Server Error");
+  }
+};
+
+module.exports = {
+  syncUser,
+  validateNewUser,
+  registerUser,
+  getProfile,
+  getPurchases,
+  getSales,
+};
